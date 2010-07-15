@@ -139,6 +139,8 @@ int main(int argc, char ** argv)
 	int ret;
 	int f = -1;
 
+	int in;
+
 	if (argv[1])
 		f = open(argv[1], O_RDONLY);
 	else{
@@ -156,24 +158,17 @@ int main(int argc, char ** argv)
 	SDL_WM_SetIcon(icon, NULL);
 
 	if (mode)
+		in = a;
+	else
+		in = f;
+
+	while (read(in, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
 	{
-		while (read(a, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
-		{
-			refresh_frame();
-			SDL_Delay(30);
-			SDL_PollEvent(&e );
-			if( e.type == SDL_QUIT )
-				exit(0);
-		}
-	}else{
-		while (read(f, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
-		{
-			refresh_frame();
-			SDL_Delay(30);
-			SDL_PollEvent(&e );
-			if( e.type == SDL_QUIT )
-				exit(0);
-		}
+		refresh_frame();
+		SDL_Delay(1);
+		SDL_PollEvent(&e );
+		if( e.type == SDL_QUIT )
+			exit(0);
 	}
 
 	SDL_Delay(2342);
