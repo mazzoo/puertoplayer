@@ -31,11 +31,48 @@
 #include <SDL/SDL_image.h>
 
 
-int winx = 640;
-int winy = 476;
+#define ICON_LOVE    "i_can_prit_love.png"
 
-#define HERTIE_GIESING "hertie_640x476.png"
-#define ICON_LOVE      "i_can_prit_love.png"
+#define HERTIE_IMAGE 1 /* default index into hertie_images[] */
+
+struct image_info
+{
+	const char * fname;
+	int          x;
+	int          y;
+	int          off_x;
+	int          off_y;
+	int          win_x;
+	int          win_y;
+};
+
+struct image_info hertie_images[] = 
+{
+	{
+		"hertie_640x476.png",
+		640, 476,
+		55, 50,
+		21, 69
+	},
+	{
+		"hertie_1328x960.png",
+		1328, 960,
+		7 +8*36, 73 +1*112,
+		36, 112
+	},
+	{
+		"hertie_800x578.png",
+		800, 578,
+		(7 +8*36)*800/1328, (73 +1*112)*578/960,
+		36*800/1328, 112*578/960
+	},
+	{
+		"hertie_640x463.png",
+		640, 463,
+		(7 +8*36)*640/1328, (73 +1*112)*463/960,
+		36*640/1328, 112*463/960
+	}
+};
 
 #define ACAB_IP      (  127  \
                     |(    0  \
@@ -69,11 +106,11 @@ void refresh_frame(void)
 	int iy;
 	SDL_Rect pixel;
 
-	int off_x = 55;
-	int off_y = 50;
+	int off_x = hertie_images[HERTIE_IMAGE].off_x;
+	int off_y = hertie_images[HERTIE_IMAGE].off_y;
 
-	pixel.w = 21;
-	pixel.h = 69;
+	pixel.w = hertie_images[HERTIE_IMAGE].win_x;
+	pixel.h = hertie_images[HERTIE_IMAGE].win_y;
 
 	for (ix=0; ix < PUERTO_X; ix++)
 	{
@@ -86,7 +123,7 @@ void refresh_frame(void)
 			                               frame[(ix + iy * PUERTO_X) * 3 + 0],
 			                               frame[(ix + iy * PUERTO_X) * 3 + 1],
 			                               frame[(ix + iy * PUERTO_X) * 3 + 2]
-						       ));
+			                               ));
 		}
 	}
 	SDL_BlitSurface(p, 0, s, 0);
@@ -95,11 +132,11 @@ void refresh_frame(void)
 
 void load_hertie_giesing(void)
 {
-	p = IMG_Load(HERTIE_GIESING);
+	p = IMG_Load(hertie_images[HERTIE_IMAGE].fname);
 	if (!p)
 	{
 		printf("ERROR: IMG_Load(%s): %s\n",
-		      HERTIE_GIESING, SDL_GetError());
+		      hertie_images[HERTIE_IMAGE].fname, SDL_GetError());
 		exit(1);
 	}
 	icon = IMG_Load(ICON_LOVE);
@@ -152,7 +189,10 @@ int main(int argc, char ** argv)
 	atexit(SDL_Quit);
 
 	load_hertie_giesing();
-	s = SDL_SetVideoMode(winx, winy, 24, SDL_HWSURFACE);
+	s = SDL_SetVideoMode(
+	        hertie_images[HERTIE_IMAGE].x,
+	        hertie_images[HERTIE_IMAGE].y,
+	        24, SDL_HWSURFACE);
 
 	SDL_WM_SetCaption( "puertoplayer - ACAB - all colours are beautiful", "ACAB" );
 	SDL_WM_SetIcon(icon, NULL);
@@ -165,7 +205,7 @@ int main(int argc, char ** argv)
 	while (read(in, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
 	{
 		refresh_frame();
-		SDL_Delay(1);
+//		SDL_Delay(1);
 		SDL_PollEvent(&e );
 		if( e.type == SDL_QUIT )
 			exit(0);
