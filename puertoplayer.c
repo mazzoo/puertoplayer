@@ -33,7 +33,7 @@
 
 #define ICON_LOVE    "i_can_prit_love.png"
 
-#define HERTIE_IMAGE 1 /* default index into hertie_images[] */
+#define HERTIE_IMAGE 2 /* default index into hertie_images[] */
 
 struct image_info
 {
@@ -44,33 +44,45 @@ struct image_info
 	int          off_y;
 	int          win_x;
 	int          win_y;
+	int          stride_x;
+	int          stride_y;
+	int          stride_x_mod;
+	int          stride_y_mod;
 };
 
-struct image_info hertie_images[] = 
+struct image_info hertie_images[] =
 {
 	{
 		"hertie_640x476.png",
 		640, 476,
 		55, 50,
-		21, 69
+		21, 69,
+		0, 0,
+		0, 0
 	},
 	{
 		"hertie_1328x960.png",
-		1328, 960,
-		7 +8*36, 73 +1*112,
-		36, 112
+		1328,  960,          /* x * y  */
+		 284,  167,          /* offset */
+		  31,  116,          /* window */
+		  11,    0,          /* stride */
+		   2,    0           /* stride every n */
 	},
 	{
 		"hertie_800x578.png",
-		800, 578,
-		(7 +8*36)*800/1328, (73 +1*112)*578/960,
-		36*800/1328, 112*578/960
+		 800, 578,
+		 170, 100,
+		  17,  69,
+		  10,   0,
+		   2,   0
 	},
 	{
 		"hertie_640x463.png",
 		640, 463,
-		(7 +8*36)*640/1328, (73 +1*112)*463/960,
-		36*640/1328, 112*463/960
+		138,  80,
+		 14,  55,
+		  7, 0,
+		  2, 0
 	}
 };
 
@@ -114,16 +126,27 @@ void refresh_frame(void)
 
 	for (ix=0; ix < PUERTO_X; ix++)
 	{
+		if (hertie_images[HERTIE_IMAGE].stride_x_mod)
+			if (!(ix % hertie_images[HERTIE_IMAGE].stride_x_mod))
+				off_x += hertie_images[HERTIE_IMAGE].stride_x;
+
 		pixel.x = pixel.w * ix + off_x;
 		for (iy=0; iy < PUERTO_Y; iy++)
 		{
+			if (hertie_images[HERTIE_IMAGE].stride_y_mod)
+				if (!(iy % hertie_images[HERTIE_IMAGE].stride_y_mod))
+					off_y += hertie_images[HERTIE_IMAGE].stride_y;
+
 			pixel.y = pixel.h * iy + off_y;
-			SDL_FillRect(s, &pixel, SDL_MapRGB(
-			                               s->format,
-			                               frame[(ix + iy * PUERTO_X) * 3 + 0],
-			                               frame[(ix + iy * PUERTO_X) * 3 + 1],
-			                               frame[(ix + iy * PUERTO_X) * 3 + 2]
-			                               ));
+			SDL_FillRect(s,
+			             &pixel,
+			             SDL_MapRGB(
+			                        s->format,
+			                        frame[(ix + iy * PUERTO_X) * 3 + 0],
+			                        frame[(ix + iy * PUERTO_X) * 3 + 1],
+			                        frame[(ix + iy * PUERTO_X) * 3 + 2]
+			                       )
+			            );
 		}
 	}
 	SDL_BlitSurface(p, 0, s, 0);
