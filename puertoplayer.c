@@ -38,16 +38,16 @@
 struct image_info
 {
 	const char * fname;
-	int          x;
-	int          y;
-	int          off_x;
-	int          off_y;
-	int          win_x;
-	int          win_y;
-	int          stride_x;
-	int          stride_y;
-	int          stride_x_mod;
-	int          stride_y_mod;
+	const int    x;
+	const int    y;
+	const int    off_x;
+	const int    off_y;
+	const int    win_x;
+	const int    win_y;
+	const int    stride_x;
+	const int    stride_y;
+	const int    stride_x_mod;
+	const int    stride_y_mod;
 };
 
 struct image_info hertie_images[] =
@@ -229,9 +229,17 @@ int main(int argc, char ** argv)
 	{
 		refresh_frame();
 //		SDL_Delay(1);
-		SDL_PollEvent(&e );
+		SDL_PollEvent( &e );
+		if (e.type == SDL_KEYDOWN)
+		{
+			if (e.key.keysym.sym == SDLK_ESCAPE)
+				exit(0);
+			if (e.key.keysym.sym == SDLK_q)
+				exit(0);
+		}
 		if( e.type == SDL_QUIT )
 			exit(0);
+
 	}
 
 	SDL_Delay(2342);
