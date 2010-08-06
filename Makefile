@@ -1,5 +1,5 @@
-CFLAGS=-Wall -O2 -ggdb
-LDFLAGS=-lSDL -lSDL_image
+CFLAGS=-Wall -O2 -ggdb `sdl-config --cflags`
+LDFLAGS=`sdl-config --libs` -lSDL_image
 all:puertoplayer
 
 clean:
