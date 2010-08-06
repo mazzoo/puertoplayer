@@ -215,7 +215,12 @@ int main(int argc, char ** argv)
 	s = SDL_SetVideoMode(
 	        hertie_images[HERTIE_IMAGE].x,
 	        hertie_images[HERTIE_IMAGE].y,
-	        24, SDL_HWSURFACE);
+	        24, SDL_HWSURFACE | SDL_HWACCEL | SDL_ASYNCBLIT);
+
+	if (!s){
+		printf("ERROR: couldn't SDL_SetVideoMode(): %s\n", SDL_GetError());
+		exit(1);
+	}
 
 	SDL_WM_SetCaption( "puertoplayer - ACAB - all colours are beautiful", "ACAB" );
 	SDL_WM_SetIcon(icon, NULL);
