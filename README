@@ -18,3 +18,15 @@
  *          Matthias Wenzel - aka - mazzoo
  *
  */
+
+ puertoplayer shows movies from the ACAB installation in munich. there
+ are two modes to run the program:
+ 1) connect live to the installation in munich and see what is currently
+    seen on the building: call the program without any arguments
+
+    ./puertoplayer
+
+ 2) play a local file by providing the filename as 1st argument, e.g.:
+
+    ./puertoplayer ./examples/xss_eruption.puerto
+

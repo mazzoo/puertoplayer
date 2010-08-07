@@ -233,7 +233,8 @@ int main(int argc, char ** argv)
 	while (read(in, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
 	{
 		refresh_frame();
-//		SDL_Delay(1);
+		if (!mode)
+			usleep(25000);
 		SDL_PollEvent( &e );
 		if (e.type == SDL_KEYDOWN)
 		{
