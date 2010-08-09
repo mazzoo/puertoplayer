@@ -183,7 +183,7 @@ void init_socket(void)
 	}
 	memset(&sa, 0, sizeof(sa));
 	sa.sin_family        = AF_INET;
-	sa.sin_port          = htons(80);
+	sa.sin_port          = htons(8080);
 	sa.sin_addr.s_addr   = ACAB_IP;
 	ret = connect(a, (struct sockaddr *) &sa, sizeof(sa));
 	if (ret < 0)
