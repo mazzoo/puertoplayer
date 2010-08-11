@@ -86,11 +86,21 @@ struct image_info hertie_images[] =
 	}
 };
 
+#define ACAB_PORT 8080
+
+#if 0
 #define ACAB_IP      (  127  \
                     |(    0  \
                << 8)|(    0  \
                <<16)|(    1  \
                <<24))
+#else
+#define ACAB_IP      (   83  \
+                    |(  133  \
+               << 8)|(  178  \
+               <<16)|(    4  \
+               <<24))
+#endif
 
 int a; /* socket to acab */
 
@@ -183,7 +193,7 @@ void init_socket(void)
 	}
 	memset(&sa, 0, sizeof(sa));
 	sa.sin_family        = AF_INET;
-	sa.sin_port          = htons(8080);
+	sa.sin_port          = htons(ACAB_PORT);
 	sa.sin_addr.s_addr   = ACAB_IP;
 	ret = connect(a, (struct sockaddr *) &sa, sizeof(sa));
 	if (ret < 0)
