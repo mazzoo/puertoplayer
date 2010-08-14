@@ -240,22 +240,26 @@ int main(int argc, char ** argv)
 	else
 		in = f;
 
-	while (read(in, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
+	int retries = 23;
+	while ( retries-- > 0)
 	{
-		refresh_frame();
-		if (!mode)
-			usleep(25000);
-		SDL_PollEvent( &e );
-		if (e.type == SDL_KEYDOWN)
+		while (read(in, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
 		{
-			if (e.key.keysym.sym == SDLK_ESCAPE)
-				exit(0);
-			if (e.key.keysym.sym == SDLK_q)
+			retries = 2342;
+			refresh_frame();
+			if (!mode)
+				usleep(25000);
+			SDL_PollEvent( &e );
+			if (e.type == SDL_KEYDOWN)
+			{
+				if (e.key.keysym.sym == SDLK_ESCAPE)
+					exit(0);
+				if (e.key.keysym.sym == SDLK_q)
+					exit(0);
+			}
+			if( e.type == SDL_QUIT )
 				exit(0);
 		}
-		if( e.type == SDL_QUIT )
-			exit(0);
-
 	}
 
 	SDL_Delay(2342);
