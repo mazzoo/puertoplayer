@@ -115,9 +115,9 @@ int mode = 0; /* 0: play local argv[1] file
 #define PUERTO_X 24
 #define PUERTO_Y 4
 
-uint8_t frame[PUERTO_X * PUERTO_Y * 3];
-
-uint8_t buf[4096];
+uint8_t frame[ 1 * PUERTO_X * PUERTO_Y * 3];
+uint8_t buf  [ 2 * PUERTO_X * PUERTO_Y * 3];
+uint8_t *pbuf;
 
 SDL_Event e;
 
@@ -241,25 +241,40 @@ int main(int argc, char ** argv)
 		in = f;
 
 	int retries = 23;
+	pbuf = buf;
+
 	while ( retries-- > 0)
 	{
-		while (read(in, frame, PUERTO_X * PUERTO_Y * 3) == PUERTO_X * PUERTO_Y * 3)
+		ret = read(in, pbuf, PUERTO_X * PUERTO_Y * 3);
+		if (ret < 0)
 		{
-			retries = 2342;
+			printf("ERROR: exiting: %s\n", strerror(errno));
+			exit(1);
+		}
+		pbuf += ret;
+
+		if (pbuf >= buf + PUERTO_X * PUERTO_Y * 3)
+		{
+			retries = 23;
+			memcpy(frame, buf, PUERTO_X * PUERTO_Y * 3);
+
+			memmove(buf, &buf[PUERTO_X * PUERTO_Y * 3], PUERTO_X * PUERTO_Y * 3);
+			pbuf -= PUERTO_X * PUERTO_Y * 3;
+
 			refresh_frame();
 			if (!mode)
 				usleep(25000);
-			SDL_PollEvent( &e );
-			if (e.type == SDL_KEYDOWN)
-			{
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-					exit(0);
-				if (e.key.keysym.sym == SDLK_q)
-					exit(0);
-			}
-			if( e.type == SDL_QUIT )
+		}
+		SDL_PollEvent( &e );
+		if (e.type == SDL_KEYDOWN)
+		{
+			if (e.key.keysym.sym == SDLK_ESCAPE)
+				exit(0);
+			if (e.key.keysym.sym == SDLK_q)
 				exit(0);
 		}
+		if( e.type == SDL_QUIT )
+			exit(0);
 	}
 
 	SDL_Delay(2342);
