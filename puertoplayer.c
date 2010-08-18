@@ -33,7 +33,7 @@
 
 #define ICON_LOVE    "i_can_prit_love.png"
 
-#define HERTIE_IMAGE 2 /* default index into hertie_images[] */
+#define HERTIE_IMAGE 3 /* default index into hertie_images[] */
 
 struct image_info
 {
@@ -61,6 +61,14 @@ struct image_info hertie_images[] =
 		0, 0
 	},
 	{
+		"hertie_trans_1328x960.png",
+		1328,  960,          /* x * y  */
+		 284,  167,          /* offset */
+		  31,  116,          /* window */
+		  11,    0,          /* stride */
+		   2,    0           /* stride every n */
+	},
+	{
 		"hertie_1328x960.png",
 		1328,  960,          /* x * y  */
 		 284,  167,          /* offset */
@@ -69,12 +77,28 @@ struct image_info hertie_images[] =
 		   2,    0           /* stride every n */
 	},
 	{
+		"hertie_trans_800x578.png",
+		 800, 578,
+		 170, 100,
+		  17,  69,
+		  10,   0,
+		   2,   0
+	},
+	{
 		"hertie_800x578.png",
 		 800, 578,
 		 170, 100,
 		  17,  69,
 		  10,   0,
 		   2,   0
+	},
+	{
+		"hertie_trans_640x463.png",
+		640, 463,
+		138,  80,
+		 14,  55,
+		  7, 0,
+		  2, 0
 	},
 	{
 		"hertie_640x463.png",
