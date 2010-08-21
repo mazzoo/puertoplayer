@@ -112,19 +112,20 @@ struct image_info hertie_images[] =
 
 #define ACAB_PORT 8080
 
-#if 0
-#define ACAB_IP      (  127  \
-                    |(    0  \
-               << 8)|(    0  \
-               <<16)|(    1  \
-               <<24))
-#else
-#define ACAB_IP      (   83  \
-                    |(  133  \
-               << 8)|(  178  \
-               <<16)|(    4  \
-               <<24))
-#endif
+
+#define ACAB_LOCALHOST_IP (  127  \
+                         |(    0  \
+                    << 8)|(    0  \
+                    <<16)|(    1  \
+                    <<24))
+
+#define ACAB_PUERTO_IP    (   83  \
+                         |(  133  \
+                    << 8)|(  178  \
+                    <<16)|(    4  \
+                    <<24))
+
+uint32_t acab_ip;
 
 int a; /* socket to acab */
 
@@ -218,7 +219,8 @@ void init_socket(void)
 	memset(&sa, 0, sizeof(sa));
 	sa.sin_family        = AF_INET;
 	sa.sin_port          = htons(ACAB_PORT);
-	sa.sin_addr.s_addr   = ACAB_IP;
+	sa.sin_addr.s_addr   = acab_ip;
+
 	ret = connect(a, (struct sockaddr *) &sa, sizeof(sa));
 	if (ret < 0)
 	{
@@ -235,7 +237,15 @@ int main(int argc, char ** argv)
 
 	int in;
 
+	acab_ip = ACAB_PUERTO_IP;
 	if (argv[1])
+		if (!strncmp(argv[1], "--localhost", 11))
+		{
+			acab_ip = ACAB_LOCALHOST_IP;
+			mode = 1;
+		}
+
+	if (!mode && argv[1])
 		f = open(argv[1], O_RDONLY);
 	else{
 		mode = 1;
@@ -258,6 +268,9 @@ int main(int argc, char ** argv)
 
 	SDL_WM_SetCaption( "puertoplayer - ACAB - all colours are beautiful", "ACAB" );
 	SDL_WM_SetIcon(icon, NULL);
+
+	SDL_BlitSurface(p, 0, s, 0);
+	SDL_Flip(s);
 
 	if (mode)
 		in = a;
